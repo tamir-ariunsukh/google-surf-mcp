@@ -11,7 +11,8 @@ RUN apt-get update && \
 RUN corepack enable && corepack prepare pnpm@latest --activate
 
 COPY . .
-RUN pnpm install --ignore-scripts && \
+RUN pnpm config set enable-pre-post-scripts false && \
+    pnpm install && \
     node scripts/sync-versions.mjs && \
     pnpm exec tsc && \
     node -e "require('fs').chmodSync('build/index.js', '755')" && \
