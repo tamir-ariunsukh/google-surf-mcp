@@ -10,10 +10,12 @@ RUN apt-get update && \
 # Enable pnpm
 RUN corepack enable && corepack prepare pnpm@latest --activate
 
-COPY package.json package-lock.json* ./
-RUN pnpm import 2>/dev/null || true; pnpm install --frozen-lockfile --ignore-scripts 2>/dev/null || pnpm install --ignore-scripts
 COPY . .
-RUN pnpm run build && pnpm prune --prod
+RUN pnpm install --ignore-scripts && \
+    node scripts/sync-versions.mjs && \
+    npx tsc && \
+    node -e "require('fs').chmodSync('build/index.js', '755')" && \
+    pnpm prune --prod
 
 ENV NODE_ENV=production
 EXPOSE 3000
