@@ -7,17 +7,8 @@ RUN apt-get update && \
     apt-get install -y --no-install-recommends chromium xvfb xauth && \
     rm -rf /var/lib/apt/lists/*
 
-# Enable pnpm
-RUN corepack enable && corepack prepare pnpm@latest --activate
-
 COPY . .
-RUN pnpm config set enable-pre-post-scripts false && \
-    pnpm install && \
-    node scripts/sync-versions.mjs && \
-    pnpm exec tsc && \
-    node -e "require('fs').chmodSync('build/index.js', '755')" && \
-    pnpm prune --prod
-
+RUN npm ci --ignore-scripts && npm run build && npm prune --omit=dev
 ENV NODE_ENV=production
 EXPOSE 3000
 CMD ["node", "build/index.js"]
