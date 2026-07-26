@@ -9,4 +9,5 @@ RUN apt-get update && \
 COPY . .
 RUN npm ci --ignore-scripts && npm run build && npm prune --omit=dev
 ENV NODE_ENV=production
-CMD ["node", "build/index.js"]
+EXPOSE 3000
+CMD ["node", "build/http-wrapper.js"]
