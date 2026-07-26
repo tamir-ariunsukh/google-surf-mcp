@@ -19,7 +19,8 @@ RUN apt-get update && \
     apt-get install -y --no-install-recommends chromium xvfb xauth && \
     rm -rf /var/lib/apt/lists/*
 
-COPY package.json package-lock.json tsconfig.json ./
+COPY package.json package-lock.json tsconfig.json scripts/ ./
+COPY scripts/ ./scripts/
 COPY src ./src
 
 # Install (with devDeps for tsc), build, then prune dev
