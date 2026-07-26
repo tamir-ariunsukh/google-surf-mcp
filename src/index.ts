@@ -586,7 +586,70 @@ if (HTTP_PORT > 0) {
     }
     if (_req.url === '/') {
       res.writeHead(200, { 'Content-Type': 'text/html' });
-      res.end(`<h1>🚀 ${NAME} v${VERSION}</h1><p>SSE: /sse | Health: /health</p>`);
+      res.end(`<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>google-surf-mcp — Google Search for AI</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #0d1117; color: #c9d1d9; min-height: 100vh; display: flex; align-items: center; justify-content: center; }
+  .card { background: #161b22; border: 1px solid #30363d; border-radius: 12px; padding: 48px; max-width: 580px; width: 90%; text-align: center; }
+  .icon { font-size: 56px; margin-bottom: 16px; }
+  h1 { font-size: 28px; color: #58a6ff; margin-bottom: 8px; }
+  .version { color: #8b949e; font-size: 14px; margin-bottom: 24px; }
+  p { color: #8b949e; line-height: 1.6; margin-bottom: 24px; font-size: 15px; }
+  .endpoints { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; margin-bottom: 32px; }
+  .ep { background: #21262d; border: 1px solid #30363d; border-radius: 8px; padding: 12px 20px; text-align: left; min-width: 150px; }
+  .ep .method { font-size: 11px; font-weight: 700; color: #3fb950; text-transform: uppercase; margin-bottom: 4px; }
+  .ep .path { font-family: 'SF Mono', 'Fira Code', monospace; font-size: 14px; color: #c9d1d9; }
+  .tools { text-align: left; margin-bottom: 24px; }
+  .tools h2 { font-size: 14px; color: #8b949e; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 12px; }
+  .tool { display: inline-block; background: #21262d; border: 1px solid #30363d; border-radius: 20px; padding: 6px 14px; margin: 4px; font-size: 13px; color: #c9d1d9; }
+  .footer { font-size: 12px; color: #484f58; }
+  .footer a { color: #58a6ff; text-decoration: none; }
+  .footer a:hover { text-decoration: underline; }
+  .status { display: inline-flex; align-items: center; gap: 6px; margin-bottom: 16px; }
+  .dot { width: 8px; height: 8px; background: #3fb950; border-radius: 50%; animation: pulse 2s infinite; }
+  @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.4; } }
+</style>
+</head>
+<body>
+<div class="card">
+  <div class="icon">🌊</div>
+  <h1>google-surf-mcp</h1>
+  <div class="version">v${VERSION} · Google Search for AI Agents</div>
+  <div class="status"><span class="dot"></span> Server Online</div>
+  <p>MCP server that gives Claude, Copilot, Cursor, and other AI tools the ability to search Google — no API key required. Uses a warm Chrome profile for realistic, bot-detection-resistant searches.</p>
+  <div class="tools">
+    <h2>Tools for AI Agents</h2>
+    <span class="tool">🔍 search</span>
+    <span class="tool">📄 extract</span>
+    <span class="tool">⚡ parallel search</span>
+    <span class="tool">🔗 search + extract</span>
+    <span class="tool">💚 health check</span>
+  </div>
+  <div class="endpoints">
+    <div class="ep">
+      <div class="method">SSE</div>
+      <div class="path">/sse</div>
+    </div>
+    <div class="ep">
+      <div class="method">GET</div>
+      <div class="path">/health</div>
+    </div>
+  </div>
+  <div class="footer">
+    <a href="https://github.com/tamir-ariunsukh/google-surf-mcp" target="_blank">GitHub</a>
+    &nbsp;·&nbsp;
+    <a href="https://github.com/HarimxChoi/google-surf-mcp" target="_blank">Upstream</a>
+    &nbsp;·&nbsp;
+    Powered by <a href="https://modelcontextprotocol.io" target="_blank">MCP</a>
+  </div>
+</div>
+</body>
+</html>`);
       return;
     }
     if (_req.url === '/sse') {
