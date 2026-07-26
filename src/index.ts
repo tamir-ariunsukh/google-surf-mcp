@@ -1,6 +1,8 @@
 #!/usr/bin/env node
 import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
 import { StdioServerTransport } from '@modelcontextprotocol/sdk/server/stdio.js';
+import { SSEServerTransport } from '@modelcontextprotocol/sdk/server/sse.js';
+import http from 'node:http';
 import { z } from 'zod';
 import { launch, getPage, PROFILE_MAIN, profileExists, clearProfileLocks } from './browser.js';
 import { search, CaptchaError } from './search.js';
@@ -572,9 +574,38 @@ server.registerTool('health', {
   return await healthTool(buildDeps());
 });
 
-const transport = new StdioServerTransport();
-await server.connect(transport);
-console.error(`[${NAME}@${VERSION}] running on stdio`);
+const HTTP_PORT = parseInt(process.env.PORT || '0', 10);
+
+if (HTTP_PORT > 0) {
+  // HTTP/SSE mode (for Dokku/web deployment)
+  const httpServer = http.createServer((_req, res) => {
+    if (_req.url === '/health') {
+      res.writeHead(200, { 'Content-Type': 'text/plain' });
+      res.end('OK');
+      return;
+    }
+    if (_req.url === '/') {
+      res.writeHead(200, { 'Content-Type': 'text/html' });
+      res.end(`<h1>🚀 ${NAME} v${VERSION}</h1><p>SSE: /sse | Health: /health</p>`);
+      return;
+    }
+    if (_req.url === '/sse') {
+      const transport = new SSEServerTransport('/messages', res);
+      server.connect(transport);
+      return;
+    }
+    res.writeHead(404);
+    res.end('Not Found');
+  });
+  httpServer.listen(HTTP_PORT, () => {
+    console.error(`[${NAME}@${VERSION}] HTTP on port ${HTTP_PORT}`);
+  });
+} else {
+  // Stdio mode (default MCP)
+  const transport = new StdioServerTransport();
+  await server.connect(transport);
+  console.error(`[${NAME}@${VERSION}] running on stdio`);
+}
 
 if (!baseDeps.config.cloudMode) {
   (async () => {
