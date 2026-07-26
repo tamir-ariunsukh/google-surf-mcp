@@ -8,6 +8,5 @@ RUN apt-get update && \
 
 COPY . .
 RUN npm ci --ignore-scripts && npm run build && npm prune --omit=dev
-RUN xvfb-run -a node build/bootstrap-auto.js
 ENV NODE_ENV=production
 CMD ["node", "build/index.js"]
