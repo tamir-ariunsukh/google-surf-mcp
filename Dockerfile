@@ -13,7 +13,7 @@ RUN corepack enable && corepack prepare pnpm@latest --activate
 COPY . .
 RUN pnpm install --ignore-scripts && \
     node scripts/sync-versions.mjs && \
-    npx tsc && \
+    pnpm exec tsc && \
     node -e "require('fs').chmodSync('build/index.js', '755')" && \
     pnpm prune --prod
 
